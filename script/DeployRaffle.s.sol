@@ -17,7 +17,8 @@ contract DeployRaffle is Script {
         if (config.subscriptionId == 0) {
             // create subscription
             CreateSubscription createSubscription = new CreateSubscription();
-            (config.subscriptionId, config.vrfCoodinator) = createSubscription.CreateSubscription(config.vrfCoodinator);
+            (config.subscriptionId, config.vrfCoordinator) = createSubscription
+                .createSubscription(config.vrfCoordinator);
         }
 
         vm.startBroadcast();
