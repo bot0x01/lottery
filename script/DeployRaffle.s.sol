@@ -8,7 +8,9 @@ import {HelperConfig} from "../script/HelperConfig.s.sol";
 import {CreateSubscription, FundSubscription, AddConsumer} from "script/Interactions.s.sol";
 
 contract DeployRaffle is Script {
-    function run() public {}
+    function run() public {
+        deployContract();
+    }
 
     function deployContract() public returns (Raffle, HelperConfig) {
         HelperConfig helperConfig = new HelperConfig(); // contract
@@ -17,12 +19,17 @@ contract DeployRaffle is Script {
         if (config.subscriptionId == 0) {
             // create subscription
             CreateSubscription createSubscription = new CreateSubscription();
-            (config.subscriptionId, config.vrfCoordinator) =
-                createSubscription.createSubscription(config.vrfCoordinator, config.account);
+            (config.subscriptionId, config.vrfCoordinator) = createSubscription
+                .createSubscription(config.vrfCoordinator, config.account);
 
             // fund it
             FundSubscription fundSubscription = new FundSubscription();
-            fundSubscription.fundSubscription(config.vrfCoordinator, config.subscriptionId, config.link, config.account);
+            fundSubscription.fundSubscription(
+                config.vrfCoordinator,
+                config.subscriptionId,
+                config.link,
+                config.account
+            );
         }
 
         vm.startBroadcast(config.account);
@@ -37,7 +44,12 @@ contract DeployRaffle is Script {
         vm.stopBroadcast();
         AddConsumer addConsumer = new AddConsumer();
         // don't need to broadcast
-        addConsumer.addConsumer(address(raffle), config.vrfCoordinator, config.subscriptionId, config.account);
+        addConsumer.addConsumer(
+            address(raffle),
+            config.vrfCoordinator,
+            config.subscriptionId,
+            config.account
+        );
 
         return (raffle, helperConfig);
     }
